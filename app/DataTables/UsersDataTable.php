@@ -21,7 +21,9 @@ class UsersDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('action', 'users.action');
+            ->addColumn('action', 'users.action')
+            ->addColumn('test', 'something');
+
     }
 
     /**
@@ -72,6 +74,7 @@ class UsersDataTable extends DataTable
                   ->addClass('text-center'),
             Column::make('id'),
             Column::make('email'),
+            Column::make('name'),
             Column::make('created_at'),
             Column::make('updated_at'),
         ];
