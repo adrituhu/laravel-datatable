@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
-<style>
-  .dataTables_filter{ 
-    display: none;
-  }
-</style>
+@push('styles')
+  <style>
+    .dataTables_filter{ 
+      display: none;
+    }
+  </style>
+@endpush
 
 @section('content')
     <div class="container-fluid">
