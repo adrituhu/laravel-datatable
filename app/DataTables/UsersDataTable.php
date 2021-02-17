@@ -22,8 +22,8 @@ class UsersDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('action', 'users.action')
-            ->addColumn('test', 'something');
-
+            ->addColumn('test', 'hi {{$name}}')
+            ->editColumn('name', 'Nama adalah {{$name}}');
     }
 
     /**
@@ -49,7 +49,24 @@ class UsersDataTable extends DataTable
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->dom('Bfrtip')
-                    ->orderBy(1)
+                    ->orderBy(2, 'desc')
+                    ->parameters([
+                        'initComplete' => 'function(){
+                            this.api().columns().every(function (index) {
+                                let column = this;
+                                let input = document.createElement("input");
+
+                                let isSearchable = this.settings()[0].aoColumns[index].bSearchable; 
+                                if(!isSearchable) return;
+
+                                $(input)
+                                .appendTo($(column.footer()).empty())
+                                .on(\'change\', function () {
+                                    column.search($(this).val(), false, false, true).draw();
+                                });
+                            });
+                        }'
+                    ])
                     ->buttons(
                         Button::make('create'),
                         Button::make('export'),
@@ -68,15 +85,14 @@ class UsersDataTable extends DataTable
     {
         return [
             Column::computed('action')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
+                  ->width(160)
                   ->addClass('text-center'),
             Column::make('id'),
-            Column::make('email'),
-            Column::make('name'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
+            Column::make('email')->title('Email'),
+            Column::make('name')->title('Nama Lengkap'),
+            Column::make('nonexistent')->data('email')->searchable(false),
+            Column::make('created_at')->searchable(false),
+            Column::make('updated_at')->searchable(false),
         ];
     }
 
