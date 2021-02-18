@@ -22,11 +22,12 @@ class UsersDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->addColumn('more', '<i class="glyphicon glyphicon-plus-sign"> </i>')
             ->addColumn('action', '
                 <a class="btn btn-primary btn-sm" href="/users/{{$id}}/edit"> edit </a>
                 <button class="btn btn-primary btn-danger btn-sm"> delete </button>
             ')
-            ->editColumn('name', 'Nama adalah {{$name}}');
+            ->rawColumns(['more', 'action']);
     }
 
     /**
@@ -57,7 +58,7 @@ class UsersDataTable extends DataTable
                           Button::make(["extend" => "create", "text" => "Buat baru"]),
                           Button::make(["extend" => "export", "text" => "Download"]),
                           Button::make(["extend" => "print", "text" => "Cetak"]),
-                          Button::make(["extend" => "reload", "text" => "Muat ulang"])
+                          Button::make(["extend" => "reload", "text" => "Muat ulang"]),
                     );
     }
 
@@ -69,9 +70,11 @@ class UsersDataTable extends DataTable
     protected function getColumns()
     {
         return [
+            Column::computed('more')
+                ->addClass('details-control'),
             Column::computed('action')
-                  ->width(160)
-                  ->addClass('text-center'),
+                ->width(160)
+                ->addClass('text-center'),
             Column::make('id'),
             Column::make('email')->title('Email')->printable(false),
             Column::make('name')->title('Nama Lengkap')->exportable(false),
