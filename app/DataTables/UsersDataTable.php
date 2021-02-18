@@ -11,6 +11,9 @@ use Yajra\DataTables\Services\DataTable;
 
 class UsersDataTable extends DataTable
 {
+
+    protected $actions = ['print', 'excel', 'pdf', 'myCustomAction'];
+    
     /**
      * Build DataTable class.
      *
@@ -65,15 +68,61 @@ class UsersDataTable extends DataTable
                                     column.search($(this).val(), false, false, true).draw();
                                 });
                             });
-                        }'
+                            ' . $this->handleCheckbox() . '
+                                
+                        }',
+                    ])
+                    ->addCheckbox([
+                        "class" => "selection"
                     ])
                     ->buttons(
                         Button::make('create'),
                         Button::make('export'),
-                        Button::make('print'),
+                        Button::make(["extend" => "print", "text" => "Cetak", "exportOptions" => ["modifier" => ["selected" => true]]]),
                         Button::make('reset'),
-                        Button::make('reload')
+                        Button::make('reload')->align('left'),
+                        Button::make([
+                            "text" => "myCustomAction",
+                        ])->action('
+                          var _buildUrl = function(dt, action) {
+                                var url = dt.ajax.url() || "";
+                                var params = dt.ajax.params();
+                                params.action = action;
+
+                                if (url.indexOf("?") > -1) {
+                                    return url + "&" + $.param(params);
+                                }
+                                
+                                return url + "?" + $.param(params);
+                            };
+
+
+                            let url = _buildUrl(dt, "myCustomAction"); window.location = url + "&selected=" + selected
+                        '),
                     );
+    }
+
+    public function handleCheckbox(){
+        return '
+            window.selected = [];
+
+            $("#users-table tbody").on("click", "input.selection", function(){
+                let tr = $(this).parents("tr")[0];
+                let dt = LaravelDataTables["users-table"];
+                let row = dt.data()[tr.sectionRowIndex];
+                let checked = $(this).is(":checked");
+
+                if(checked) return selected.push(row.id);
+                selected.filter(id => id !== row.id)
+            })
+        ';
+    }
+
+    public function myCustomAction(){
+        $selectedIds = $this->request()->get('selected');
+
+        $query = $this->query(new User)->whereIn('id', explode(',', $selectedIds));
+        return $query->get();
     }
 
     /**
@@ -88,8 +137,8 @@ class UsersDataTable extends DataTable
                   ->width(160)
                   ->addClass('text-center'),
             Column::make('id'),
-            Column::make('email')->title('Email'),
-            Column::make('name')->title('Nama Lengkap'),
+            Column::make('email')->title('Email')->printable(false),
+            Column::make('name')->title('Nama Lengkap')->exportable(false),
             Column::make('nonexistent')->data('email')->searchable(false),
             Column::make('created_at')->searchable(false),
             Column::make('updated_at')->searchable(false),
