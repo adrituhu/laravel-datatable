@@ -22,7 +22,10 @@ class UsersDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('more', '<i class="glyphicon glyphicon-plus-sign"> </i>')
+            ->addColumn('more', '<i class="fa fa-plus"> </i>')
+            ->addColumn('info_detail', function(User $user){
+                return view('users.info-detail', compact('user'));
+            })
             ->addColumn('action', '
                 <a class="btn btn-primary btn-sm" href="/users/{{$id}}/edit"> edit </a>
                 <button class="btn btn-primary btn-danger btn-sm"> delete </button>
@@ -54,6 +57,27 @@ class UsersDataTable extends DataTable
                     ->minifiedAjax()
                     ->dom('Bfrtip')
                     ->orderBy(2, 'desc')
+                    ->parameters([
+                        "initComplete" => 'function(){
+                            function format(d){ return d.info_detail }
+
+                            let table = this.api();
+
+                            $("#users-table").on("click", "td.details-control", function(){
+                               let tr = $(this).closest("tr");
+                               let row = table.row(tr); 
+                               if ( row.child.isShown() ) {
+                                   row.child.hide();
+                                   tr.removeClass("shown");
+                               }
+                               else {
+                                   row.child(format(row.data())).show();
+                                   tr.addClass("shown");
+                               }
+
+                            })
+                        }'
+                    ])
                     ->buttons(
                           Button::make(["extend" => "create", "text" => "Buat baru"]),
                           Button::make(["extend" => "export", "text" => "Download"]),
