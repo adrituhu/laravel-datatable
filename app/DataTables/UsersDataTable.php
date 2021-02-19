@@ -26,10 +26,7 @@ class UsersDataTable extends DataTable
             ->addColumn('info_detail', function(User $user){
                 return view('users.info-detail', compact('user'));
             })
-            ->addColumn('action', '
-                <a class="btn btn-primary btn-sm" href="/users/{{$id}}/edit"> edit </a>
-                <button class="btn btn-primary btn-danger btn-sm"> delete </button>
-            ')
+            ->addColumn('action', 'users.action')
             ->rawColumns(['more', 'action']);
     }
 
@@ -66,12 +63,14 @@ class UsersDataTable extends DataTable
                             $("#users-table").on("click", "td.details-control", function(){
                                let tr = $(this).closest("tr");
                                let row = table.row(tr); 
+
                                if ( row.child.isShown() ) {
                                    row.child.hide();
                                    tr.removeClass("shown");
                                }
+
                                else {
-                                   row.child(format(row.data())).show();
+                                   row.child(row.data().info_detail).show();
                                    tr.addClass("shown");
                                }
 
@@ -94,8 +93,7 @@ class UsersDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            Column::computed('more')
-                ->addClass('details-control'),
+            Column::computed('more')->addClass('details-control'),
             Column::computed('action')
                 ->width(160)
                 ->addClass('text-center'),
