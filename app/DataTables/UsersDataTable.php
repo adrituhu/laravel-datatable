@@ -36,6 +36,9 @@ class UsersDataTable extends DataTable
                 return view('users.posts-detail', ['user' => $user]);
             })
             ->addColumn('action', 'users.action')
+            ->setRowClass(function ($user) {
+                if($user->name == "Mauricio Auer") return 'alert-success';
+            })
             ->rawColumns(['more', 'action']);
     }
 
