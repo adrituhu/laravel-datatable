@@ -2,12 +2,15 @@
 
 namespace App\DataTables;
 
+use App\Models\Post;
 use App\Models\User;
+use Yajra\DataTables\DataTables;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+
 
 class UsersDataTable extends DataTable
 {
@@ -26,8 +29,14 @@ class UsersDataTable extends DataTable
             ->addColumn('info_detail', function(User $user){
                 return view('users.info-detail', compact('user'));
             })
+            ->addColumn('post_url', function(User $user){
+                return url("/users/$user->id/posts");
+            })
+            ->addColumn('post_detail', function(User $user){
+                return view('users.posts-detail', ['user' => $user]);
+            })
             ->addColumn('action', 'users.action')
-            ->rawColumns(['more', 'action']);
+            ->rawColumns(['more', 'action', 'post_url']);
     }
 
     /**
@@ -63,6 +72,7 @@ class UsersDataTable extends DataTable
                             $("#users-table").on("click", "td.details-control", function(){
                                let tr = $(this).closest("tr");
                                let row = table.row(tr); 
+                               let tableId = "posts-" + row.data().id;
 
                                if ( row.child.isShown() ) {
                                    row.child.hide();
@@ -70,11 +80,24 @@ class UsersDataTable extends DataTable
                                }
 
                                else {
-                                   row.child(row.data().info_detail).show();
+                                   row.child(row.data().post_detail).show();
+                                   initTable(tableId, row.data().post_url)
                                    tr.addClass("shown");
                                }
-
                             })
+
+                            function initTable(tableId, posts_detail_url) {
+                                $("#" + tableId).DataTable({
+                                    processing: true,
+                                    serverSide: true,
+                                    ajax: posts_detail_url,
+                                    columns: [
+                                        { data: "id", name: "id" },
+                                        { data: "title", name: "title" },
+                                        { data: "author.name", name: "author_name" },
+                                    ]
+                                })
+                            }
                         }'
                     ])
                     ->buttons(
