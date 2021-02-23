@@ -36,7 +36,7 @@ class UsersDataTable extends DataTable
                 return view('users.posts-detail', ['user' => $user]);
             })
             ->addColumn('action', 'users.action')
-            ->rawColumns(['more', 'action', 'post_url']);
+            ->rawColumns(['more', 'action']);
     }
 
     /**
