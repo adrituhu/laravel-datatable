@@ -94,7 +94,6 @@ class UsersDataTable extends DataTable
                                     columns: [
                                         { data: "id", name: "id" },
                                         { data: "title", name: "title" },
-                                        { data: "author.name", name: "author_name" },
                                     ]
                                 })
                             }

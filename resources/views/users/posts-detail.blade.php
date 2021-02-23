@@ -4,7 +4,6 @@
     <tr>
         <th>Id</th>
         <th>Title</th>
-        <th>Author</th>
     </tr>
     </thead>
 </table>
