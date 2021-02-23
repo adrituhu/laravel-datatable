@@ -35,7 +35,16 @@ class UsersDataTable extends DataTable
             ->addColumn('post_detail', function(User $user){
                 return view('users.posts-detail', ['user' => $user]);
             })
-            ->addColumn('action', 'users.action')
+            ->addColumn('action', '
+                <a href="/users/{{$id}}/edit" class="btn btn-primary btn-sm">Edit</a>
+                <form method="POST" class="d-inline" action="/users/{{$id}}">
+                  @method("DELETE")
+                  @csrf
+                  <input type="hidden" value="{{$id}}" />
+            
+                  <button class="btn btn-danger btn-sm"> Hapus </button>
+                </form>
+            ')
             ->setRowClass(function ($user) {
                 if($user->name == "Mauricio Auer") return 'alert-success';
             })
