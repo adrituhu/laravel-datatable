@@ -14,9 +14,8 @@ class UsersController extends Controller
         return $dataTable->render('users.index');
     }
 
-    public function posts(Request $request, $id){
-        $user_id = $id;
-        $model = Post::where('author_id', $user_id)->with('author');
+    public function posts($id){
+        $model = Post::where('author_id', $id)->with('author');
         return DataTables::of($model)->toJson();
     }
 
