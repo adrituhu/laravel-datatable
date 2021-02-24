@@ -27,3 +27,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/users/{id}/posts', [UsersController::class, 'posts']);
 Route::get('/users', [UsersController::class, 'index']);
 
+
+Route::get('/posts', [PostsController::class, 'index']);
+
