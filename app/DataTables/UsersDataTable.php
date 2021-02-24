@@ -30,7 +30,12 @@ class UsersDataTable extends DataTable
             ->addColumn('action', function(User $user){
                 return view('users.actions', compact('user'));
             })
-            ->rawColumns(['action']);
+            ->addColumn('posts', function(User $user){
+                return $user->posts->map(function($post){
+                    return \Str::limit($post->title, 30, '...');
+                })->implode('<br>');
+            })
+            ->rawColumns(['action', 'posts']);
     }
 
     /**
@@ -41,7 +46,7 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model)
     {
-        return $model->newQuery();
+        return $model->with('posts')->select('users.*')->newQuery();
     }
 
     /**
@@ -151,6 +156,7 @@ class UsersDataTable extends DataTable
             Column::make('id'),
             Column::make('email')->title('Email')->printable(false),
             Column::make('name')->title('Nama Lengkap')->exportable(false),
+            Column::make('posts','posts.title'),
             Column::make('created_at')->searchable(false),
             Column::make('updated_at')->searchable(false),
         ];
