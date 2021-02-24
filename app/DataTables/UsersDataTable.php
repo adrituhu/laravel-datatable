@@ -15,6 +15,8 @@ use Yajra\DataTables\Services\DataTable;
 class UsersDataTable extends DataTable
 {
 
+    protected $actions = ['print', 'export', 'csv', 'excel', 'hapusUsers'];
+
     /**
      * Build DataTable class.
      *
@@ -25,20 +27,10 @@ class UsersDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('more', '<i class="fa fa-plus"> </i>')
-            ->addColumn('info_detail', function(User $user){
-                return view('users.info-detail', compact('user'));
-            })
-            ->addColumn('post_url', function(User $user){
-                return url("/users/$user->id/posts");
-            })
-            ->addColumn('post_detail', function(User $user){
-                return view('users.posts-detail', ['user' => $user]);
-            })
             ->addColumn('action', function(User $user){
                 return view('users.actions', compact('user'));
             })
-            ->rawColumns(['more', 'action']);
+            ->rawColumns(['action']);
     }
 
     /**
@@ -65,49 +57,65 @@ class UsersDataTable extends DataTable
                     ->minifiedAjax()
                     ->dom('Bfrtip')
                     ->orderBy(2, 'desc')
-                    ->addCheckbox([], true)
+                    ->addCheckbox(["class" => "selection", "title" => ""], true)
                     ->parameters([
-                        "initComplete" => 'function(){
-                            function format(d){ return d.info_detail }
-
-                            let table = this.api();
-
-                            $("#users-table").on("click", "td.details-control", function(){
-                               let tr = $(this).closest("tr");
-                               let row = table.row(tr); 
-                               let tableId = "posts-" + row.data().id;
-
-                               if ( row.child.isShown() ) {
-                                   row.child.hide();
-                                   tr.removeClass("shown");
-                               }
-
-                               else {
-                                   row.child(row.data().post_detail).show();
-                                   initTable(tableId, row.data().post_url)
-                                   tr.addClass("shown");
-                               }
-                            })
-
-                            function initTable(tableId, posts_detail_url) {
-                                $("#" + tableId).DataTable({
-                                    processing: true,
-                                    serverSide: true,
-                                    ajax: posts_detail_url,
-                                    columns: [
-                                        { data: "id", name: "id" },
-                                        { data: "title", name: "title" },
-                                    ]
-                                })
-                            }
-                        }'
+                        "initComplete" => $this->initComplete()
                     ])
                     ->buttons(
                           Button::make(["extend" => "create", "text" => "Buat baru"]),
                           Button::make(["extend" => "export", "text" => "Download"]),
                           Button::make(["extend" => "print", "text" => "Cetak"]),
                           Button::make(["extend" => "reload", "text" => "Muat ulang"]),
+                          Button::make(["text" => "Hapus"])->action($this->hapusActionCallback())
                     );
+    }
+
+    public function hapusActionCallback(){
+        return 'function(e, dt, node, config){
+          var _buildUrl = function(dt, action) {
+                var url = dt.ajax.url() || "";
+                var params = dt.ajax.params();
+                params.action = action;
+
+                if (url.indexOf("?") > -1) {
+                    return url + "&" + $.param(params);
+                }
+                
+                return url + "?" + $.param(params);
+            };
+
+
+            let url = _buildUrl(dt, "hapusUsers");
+            window.location = url + "&selected=" + window.selected;
+
+        }';
+    }
+
+
+
+    public function initComplete(){
+        return 'function(){
+            let data = this.api().data();
+            window.selected = [];
+
+            $("#users-table tbody").on("click", "input.selection", function(){
+                let tr = $(this).closest("tr")[0];
+                let row = data[tr.sectionRowIndex];
+                let checked = $(this).is(":checked");
+
+                if(checked) return selected.push(row.id);
+                selected.filter(id => id !== row.id)
+            })
+          }
+        ';
+    }
+
+    public function hapusUsers(){
+        $selectedIds = $this->request()->get('selected');
+        $selectedIds = explode(',', $selectedIds);
+
+        User::whereIn('id', $selectedIds)->delete();
+        return redirect()->back();
     }
 
     /**
@@ -118,7 +126,6 @@ class UsersDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            Column::computed('more')->addClass('details-control'),
             Column::computed('action')
                 ->width(160)
                 ->addClass('text-center'),
