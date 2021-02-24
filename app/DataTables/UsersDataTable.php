@@ -31,7 +31,9 @@ class UsersDataTable extends DataTable
                 return view('users.actions', compact('user'));
             })
             ->addColumn('posts', function(User $user){
-                return $user->title;
+                return $user->posts->map(function($post){
+                    return \Str::limit($post->title, 30, '...');
+                })->implode('<br>');
             })
             ->rawColumns(['action', 'posts']);
     }
@@ -44,9 +46,7 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model)
     {
-        return $model
-            ->join('posts', 'users.id', '=', 'posts.author_id')
-            ->select(['users.id', 'users.name', 'users.email', 'posts.title', 'posts.id', 'users.created_at', 'users.updated_at']);
+       return $model->with('posts')->select('users.*')->newQuery();
     }
 
     /**

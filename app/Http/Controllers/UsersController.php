@@ -6,6 +6,7 @@ use App\DataTables\UsersDataTable;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 
 class UsersController extends Controller
@@ -30,9 +31,10 @@ class UsersController extends Controller
                 return $dataTable
                     ->addColumn('test', 'Kolom Extended {{$name}}');
             })
-            ->withHtml(function($builder) use($dataTable) {
+            ->withHtml(function($builder){
 
-                $builder
+                return $builder
+                    ->dom('B')
                     ->columns([
                         Column::computed('action')
                             ->width(160)
@@ -44,11 +46,9 @@ class UsersController extends Controller
                         Column::make('test')
                     ])
                     ->addCheckbox(["class" => "selection", "title" => ""], true);
+
             })
             ->render('users.index');
 
     } 
-
-
-
 }
