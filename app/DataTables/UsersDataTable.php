@@ -59,7 +59,8 @@ class UsersDataTable extends DataTable
                     ->orderBy(2, 'desc')
                     ->addCheckbox(["class" => "selection", "title" => ""], true)
                     ->parameters([
-                        "initComplete" => $this->initComplete()
+                        "initComplete" => $this->initComplete(),
+                        "drawCallback" => $this->drawCallback()
                     ])
                     ->buttons(
                           Button::make(["extend" => "create", "text" => "Buat baru"]),
@@ -108,6 +109,24 @@ class UsersDataTable extends DataTable
             })
           }
         ';
+    }
+
+    public function drawCallback(){
+        return 'function(){
+
+            let data = this.api().data();
+            let selected = window.selected || [];
+
+            $("input.selection").each(function(){
+                let tr = $(this).closest("tr")[0];
+                let row = data[tr.sectionRowIndex];
+            
+                if(selected.indexOf(row.id) > -1){
+                  $(this).attr("checked", true);
+                }
+            })
+            
+        }';
     }
 
     public function hapusUsers(){
