@@ -31,9 +31,7 @@ class UsersDataTable extends DataTable
                 return view('users.actions', compact('user'));
             })
             ->addColumn('posts', function(User $user){
-                return $user->posts->map(function($post){
-                    return \Str::limit($post->title, 30, '...');
-                })->implode('<br>');
+                return $user->title;
             })
             ->rawColumns(['action', 'posts']);
     }
@@ -46,7 +44,9 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model)
     {
-        return $model->with('posts')->select('users.*')->newQuery();
+        return $model
+            ->join('posts', 'users.id', '=', 'posts.author_id')
+            ->select(['users.id', 'users.name', 'users.email', 'posts.title', 'posts.id', 'users.created_at', 'users.updated_at']);
     }
 
     /**
@@ -153,12 +153,12 @@ class UsersDataTable extends DataTable
             Column::computed('action')
                 ->width(160)
                 ->addClass('text-center'),
-            Column::make('id'),
-            Column::make('email')->title('Email')->printable(false),
-            Column::make('name')->title('Nama Lengkap')->exportable(false),
+            Column::make('id', 'users.id'),
+            Column::make('email', 'users.email')->title('Email')->printable(false),
+            Column::make('name', 'users.name')->title('Nama Lengkap')->exportable(false),
             Column::make('posts','posts.title'),
-            Column::make('created_at')->searchable(false),
-            Column::make('updated_at')->searchable(false),
+            Column::make('created_at', 'users.created_at')->searchable(false),
+            Column::make('updated_at', 'users.updated_at')->searchable(false),
         ];
     }
 
