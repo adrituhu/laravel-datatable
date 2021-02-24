@@ -38,9 +38,6 @@ class UsersDataTable extends DataTable
             ->addColumn('action', function(User $user){
                 return view('users.actions', compact('user'));
             })
-            ->setRowClass(function ($user) {
-                if($user->name == "Mauricio Auer") return 'alert-success';
-            })
             ->rawColumns(['more', 'action']);
     }
 
@@ -68,6 +65,7 @@ class UsersDataTable extends DataTable
                     ->minifiedAjax()
                     ->dom('Bfrtip')
                     ->orderBy(2, 'desc')
+                    ->addCheckbox([], true)
                     ->parameters([
                         "initComplete" => 'function(){
                             function format(d){ return d.info_detail }
