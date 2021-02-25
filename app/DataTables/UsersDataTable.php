@@ -37,11 +37,13 @@ class UsersDataTable extends DataTable
                 })->implode('<br>');
             })
             ->filter(function($query) use($request) {
-                if($request->has('name')){
-                    $name = $request->get("name");
-                    return $query->where('name', 'LIKE', "%$name%");
+
+                if($request->has('domain')){
+                    $domain = $request->get("domain");
+                    return $query->where('domain', 'LIKE', "$domain%");
                 }
-            })
+
+            }, true)
             ->rawColumns(['action', 'posts']);
     }
 
@@ -67,7 +69,7 @@ class UsersDataTable extends DataTable
                     ->setTableId('users-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->dom('Brtip')
+                    ->dom('Brftip')
                     ->orderBy(2, 'desc')
                     ->addCheckbox(["class" => "selection", "title" => ""], true)
                     ->parameters([

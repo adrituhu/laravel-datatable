@@ -10,7 +10,7 @@
 
     <div class="container">
       <form action="/users" method="GET">
-      <input type="text" class="form-control" name="name" value="{{\Request::get('name')}}">
+      <input type="text" class="form-control" name="email" value="{{\Request::get('email')}}">
       </form>
     </div>
 
