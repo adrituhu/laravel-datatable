@@ -7,6 +7,15 @@
 @endpush
 
 @section('content')
+
+    <div class="container">
+      <form action="/users" method="GET">
+      <input type="text" class="form-control" name="name" value="{{\Request::get('name')}}">
+      </form>
+    </div>
+
+    <hr/>
+
     <div class="container-fluid">
         {{$dataTable->table([], true)}}
     </div>

@@ -4,6 +4,7 @@ namespace App\DataTables;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
@@ -23,7 +24,7 @@ class UsersDataTable extends DataTable
      * @param mixed $query Results from query() method.
      * @return \Yajra\DataTables\DataTableAbstract
      */
-    public function dataTable($query)
+    public function dataTable($query, Request $request)
     {
         return datatables()
             ->eloquent($query)
@@ -34,6 +35,12 @@ class UsersDataTable extends DataTable
                 return $user->posts->map(function($post){
                     return \Str::limit($post->title, 30, '...');
                 })->implode('<br>');
+            })
+            ->filter(function($query) use($request) {
+                if($request->has('name')){
+                    $name = $request->get("name");
+                    return $query->where('name', 'LIKE', "%$name%");
+                }
             })
             ->rawColumns(['action', 'posts']);
     }
@@ -60,7 +67,7 @@ class UsersDataTable extends DataTable
                     ->setTableId('users-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->dom('Bfrtip')
+                    ->dom('Brtip')
                     ->orderBy(2, 'desc')
                     ->addCheckbox(["class" => "selection", "title" => ""], true)
                     ->parameters([
