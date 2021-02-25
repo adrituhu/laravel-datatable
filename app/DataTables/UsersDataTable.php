@@ -38,9 +38,9 @@ class UsersDataTable extends DataTable
             })
             ->filter(function($query) use($request) {
 
-                if($request->has('domain')){
-                    $domain = $request->get("domain");
-                    return $query->where('domain', 'LIKE', "$domain%");
+                if($request->has('email')){
+                    $email = $request->get("email");
+                    return $query->where('email', 'LIKE', "%$email");
                 }
 
             }, true)
