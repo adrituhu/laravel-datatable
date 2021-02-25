@@ -36,6 +36,12 @@ class UsersDataTable extends DataTable
                     return \Str::limit($post->title, 30, '...');
                 })->implode('<br>');
             })
+            ->editColumn('created_at', function(User $user){
+                return $user->created_at->format('d/m/Y');
+            })
+            ->editColumn('updated_at', function(User $user){
+                return $user->updated_at->format('d/m/Y');
+            })
             ->filter(function($query) use($request) {
 
                 if($request->has('operator') && $request->has('jumlah_post')){
