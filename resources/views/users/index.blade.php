@@ -9,9 +9,31 @@
 @section('content')
 
     <div class="container">
-      <form action="/users" method="GET">
-      <input type="text" class="form-control" name="email" value="{{\Request::get('email')}}">
-      </form>
+      <div class="row">
+
+        <form action="/users" method="GET" class="form-inline">
+
+          <div class="form-group mr-2">
+            <div class="mr-2"> Email </div>
+            <input type="text" class="form-control" name="email" value="{{\Request::get('email')}}">
+          </div>
+
+
+          <div class="form-group mr-2">
+            <div class="mr-2"> Jumlah Post </div>
+            <select class="form-control" name="operator">
+              <option value=">="> &gt;= </option>
+              <option value=">"> &gt; </option>
+              <option value="<"> &lt; </option>
+              <option value="="> = </option>
+            </select>
+            <input type="text" class="form-control" name="jumlah_post" value="{{\Request::get('jumlah_post')}}">
+          </div>
+
+          <button type="submit" class="btn btn-primary"> Cari </button>
+        </form>
+
+      </div>
     </div>
 
     <hr/>

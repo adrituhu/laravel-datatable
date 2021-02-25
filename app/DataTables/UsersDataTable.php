@@ -38,10 +38,18 @@ class UsersDataTable extends DataTable
             })
             ->filter(function($query) use($request) {
 
-                if($request->has('email')){
-                    $email = $request->get("email");
-                    return $query->where('email', 'LIKE', "%$email");
+                if($request->has('operator') && $request->has('jumlah_post')){
+                    $operator = $request->get('operator');
+                    $jumlah = $request->get('jumlah_post');
+                    $query->withCount('posts')->having('posts_count', $operator, $jumlah);
                 }
+
+                if($request->has('email')){
+                    $email = $request->get('email');
+                    $query->where('email', 'LIKE', "%$email%");
+                }
+
+                return $query;
 
             }, true)
             ->rawColumns(['action', 'posts']);
