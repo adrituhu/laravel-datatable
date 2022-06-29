@@ -15,10 +15,6 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <style>
-      @import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.css"
-    </style>
-    @stack("styles")
 </head>
 <body>
     <div id="app">
@@ -41,12 +37,9 @@
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-                            
+                            <li class="nav-item">
+                                {{-- <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a> --}}
+                            </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
@@ -80,9 +73,8 @@
             @yield('content')
         </main>
     </div>
-
-    <script src="{{ mix('js/app.js') }}"></script>
-    <script src="{{ asset('vendor/datatables/buttons.server-side.js') }}"></script>
-    @stack('scripts')
 </body>
+<script src="{{ mix('js/app.js') }}"></script>
+<script src="{{ asset('vendor/datatables/buttons.server-side.js') }}"></script>
+@stack('scripts')
 </html>

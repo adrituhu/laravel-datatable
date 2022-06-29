@@ -22,7 +22,7 @@
         "sass-loader": "^8.0.0"
     },
     "dependencies": {
-        "datatables.net-bs4": "^1.10.23",
-        "datatables.net-buttons-bs4": "^1.6.5"
+        "datatables.net-bs4": "^1.10.25",
+        "datatables.net-buttons-bs4": "^1.7.1"
     }
 }
